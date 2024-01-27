@@ -13,13 +13,16 @@ func init() {
 	//if err != nil {
 	//	panic(err)
 	//}
-	dsn := "postgres://go_web_user:iW5gPaUFB9gCqsMcOwhJvjIrAnbvERkH@dpg-cmpnicmn7f5s73dfoqog-a.singapore-postgres.render.com/go_web"
+	//dsn := "postgres://go_web_user:iW5gPaUFB9gCqsMcOwhJvjIrAnbvERkH@dpg-cmpnicmn7f5s73dfoqog-a.singapore-postgres.render.com/go_web"
+	dsn := "host=dpg-cmpnicmn7f5s73dfoqog-a.singapore-postgres.render.com user=go_web_user password=iW5gPaUFB9gCqsMcOwhJvjIrAnbvERkH dbname=go_web port=5432 TimeZone=Asia/Shanghai"
 
-	_gormDB, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	var err error
+	_gormDB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic(err)
 	}
 
+	_gormDB.AutoMigrate(&Article{})
 	err = _gormDB.AutoMigrate(&User{})
 	if err != nil {
 		fmt.Println("Auto Migrate Schema Error", err.Error())

@@ -8,5 +8,12 @@
       <jdbc-url>jdbc:mysql://localhost:3306/go_web</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source source="LOCAL" name="go_web@dpg-cmpnicmn7f5s73dfoqog-a.singapore-postgres.render.com" uuid="66a14b15-afbb-47fe-bc4b-aaa98da20a52">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://dpg-cmpnicmn7f5s73dfoqog-a.singapore-postgres.render.com:5432/go_web</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>

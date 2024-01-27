@@ -6,6 +6,7 @@ import (
 	"go-web/model"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -15,10 +16,12 @@ func GetUserInfo(c *gin.Context) {
 	var userItem []model.User
 	if err := db.Find(&userItem).Error; err != nil {
 		fmt.Println("查询失败", err)
+		c.JSON(http.StatusNotFound, gin.H{"success": false, "error": err.Error()})
+		return
 	}
 	fmt.Println(userItem)
 
-	c.JSON(200, userItem)
+	c.JSON(200, gin.H{"success": true, "data": userItem})
 }
 
 func AddUserInfo(c *gin.Context) {
@@ -66,8 +69,49 @@ func GetArticleById(c *gin.Context) {
 	c.String(200, `%s`, articleId)
 }
 
-func GetBookInfoById(c *gin.Context) {
-	bookId := c.Param("id")
+func GetArticleInfoById(c *gin.Context) {
+	articleId := c.Param("id")
 
-	c.String(200, `书籍 ID: %s`, bookId)
+	articleIdNum, err := strconv.Atoi(articleId)
+	if err != nil {
+		c.JSON(400, gin.H{"success": false, "error": "error format article id"})
+		return
+	}
+
+	var article model.Article
+
+	db := model.GetDB()
+	if result := db.Find(&article, "id = ?", articleIdNum); result.Error != nil {
+		c.JSON(500, gin.H{"success": false, "error": result.Error.Error()})
+		return
+	}
+	c.JSON(200, gin.H{"success": true, "data": article})
+}
+
+func PostArticle(c *gin.Context) {
+	article := model.Article{}
+	if err := c.ShouldBindJSON(&article); err != nil {
+		c.JSON(http.StatusForbidden, gin.H{"success": false, "error": err.Error()})
+		return
+	}
+	fmt.Println(article)
+
+	db := model.GetDB()
+	result := db.Create(&article)
+	if result.Error != nil {
+		c.JSON(400, gin.H{"success": false, "error": result.Error.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"success": true, "data": article})
+}
+
+func DeleteArticle(c *gin.Context) {
+	id := c.Param("id")
+
+	db := model.GetDB()
+	if result := db.Delete(&model.Article{}, id); result.Error != nil {
+		c.JSON(500, gin.H{"success": false, "error": result.Error.Error()})
+		return
+	}
+	c.JSON(200, gin.H{"success": true})
 }

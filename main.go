@@ -53,7 +53,11 @@ func SetAndConfigRouter() *gin.Engine {
 	r.GET("/article", controllers.GetArticleById)
 
 	// 解析路由参数
-	r.GET("/book/:id", controllers.GetBookInfoById)
+	r.GET("/article/:id", controllers.GetArticleInfoById)
+
+	r.POST("/article", controllers.PostArticle)
+	r.DELETE("/article/:id", controllers.DeleteArticle)
+
 	return r
 }
 
