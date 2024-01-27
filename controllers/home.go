@@ -10,6 +10,8 @@ import (
 	"time"
 )
 
+// gorm document: https://gorm.io/zh_CN/docs/index.html
+
 func GetUserInfo(c *gin.Context) {
 	db := model.GetDB()
 
@@ -38,6 +40,27 @@ func AddUserInfo(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, u)
 	}
 	c.JSON(http.StatusOK, u)
+}
+
+func UpdateUserEmail(c *gin.Context) {
+	userId := c.Param("id")
+	var newInfo model.PostUser
+	if err := c.ShouldBindJSON(&newInfo); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": err.Error()})
+		return
+	}
+
+	u := model.User{}
+	db := model.GetDB()
+	db.Find(&u, userId)
+	u.Email = newInfo.Email
+	fmt.Println(newInfo.Email, newInfo.Name, newInfo.Address)
+
+	if err := db.Save(&u).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"success": true, "data": newInfo})
 }
 
 func DeleteUser(c *gin.Context) {
